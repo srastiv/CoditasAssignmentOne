@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import './music_elements.dart';
-import 'main.dart';
 
-class MusicScreen extends StatelessWidget {
+class musicScreen extends StatelessWidget {
   String title;
-  MusicScreen(this.title);
+  musicScreen(this.title);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +12,7 @@ class MusicScreen extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: Center(
-        child: Text(' $title is playing'),
+        child: Text(' ${title} is playing'),
       ),
     );
   }
