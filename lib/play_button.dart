@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:mi_card/music_play_function.dart';
 import 'music_screen.dart';
-import 'music_data.dart';
+import 'models/music_provider.dart';
 import 'package:provider/provider.dart';
 
-class PlayButton extends StatelessWidget {
-  bool flag = true;
+class PlayButton extends StatefulWidget {
+  @override
+  State<PlayButton> createState() => _PlayButtonState();
+}
 
+MusicDataProvider tiletile = MusicDataProvider();
+
+class _PlayButtonState extends State<PlayButton> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,66 +19,82 @@ class PlayButton extends StatelessWidget {
         title: Text('Trending Songs', style: TextStyle(color: Colors.black)),
         backgroundColor: Color.fromARGB(255, 255, 255, 255),
       ),
-      body: Consumer<musicData>(
-        builder: (context, musiccddata, child) {
+      body: Consumer<MusicDataProvider>(
+        builder: (context, musicdata, child) {
           return ListView.builder(
-            itemCount: 10,
+            itemCount: tiletile.songTile.length,
             itemBuilder: (context, index) {
-              return SingleChildScrollView(
-                child: Card(
-                  elevation: 1,
-                  child: ListTile(
-                    title: Text(Provider.of<musicData>(context)
-                        .songTile[index]
-                        .songName),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(Provider.of<musicData>(context)
-                            .songTile[index]
-                            .artistName),
-                        RaisedButton(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: flag ? Colors.blue : Colors.red),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: flag
-                              ? Text("PLAY")
-                              : (Text(
-                                  "PAUSE",
-                                  style: TextStyle(color: Colors.red),
-                                )),
-                          onPressed: () {
-                            //     context.read<musicData>().updatePlay();
-
-                            Provider.of<musicData>(context, listen: false);
-
-                            // setState(() {
-                            //   if (flag) {
-                            //     flag = false;
-                            //   } else {
-                            //     flag = true;
-                            //   }
-                            // });
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => musicScreen(
-                                  [index].toString(),
-                                ),
-                              ),
-                            );
-                            debugPrint('executed play button');
-                          },
+              return Card(
+                elevation: 1,
+                child: ListTile(
+                  title: Text(Provider.of<MusicDataProvider>(context)
+                      .songTile[index]
+                      .songName),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(Provider.of<MusicDataProvider>(context)
+                          .songTile[index]
+                          .artistName),
+                      RaisedButton(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                              color: Provider.of<MusicDataProvider>(context,
+                                          listen: false)
+                                      .songTile[index]
+                                      .isPressed
+                                  ? Colors.blue
+                                  : Colors.red),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      ],
-                    ),
-                    tileColor: Colors.white,
-                    trailing: Image.network(
-                        'https://images.macrumors.com/t/vxLWzn9mUoWB93SzMmDXZIpOjWQ=/1600x0/article-new/2018/05/apple-music-note-800x420.jpg'), //songTile[index].artistImage,
+                        child: Provider.of<MusicDataProvider>(context,
+                                    listen: false)
+                                .songTile[index]
+                                .isPressed
+                            ? Text("PLAY")
+                            : (Text(
+                                "PAUSE",
+                                style: TextStyle(color: Colors.red),
+                              )),
+                        onPressed: () {
+                          setState(() {
+                            // play.togglePlaying();
+                            if (Provider.of<MusicDataProvider>(context,
+                                    listen: false)
+                                .songTile[index]
+                                .isPressed) {
+                              Provider.of<MusicDataProvider>(context,
+                                      listen: false)
+                                  .songTile[index]
+                                  .isPressed = false;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => musicScreen(
+                                    Provider.of<MusicDataProvider>(context)
+                                        .songTile[index]
+                                        .songName
+                                        .toString(),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              Provider.of<MusicDataProvider>(context,
+                                      listen: false)
+                                  .songTile[index]
+                                  .isPressed = true;
+                            }
+                          });
+
+                          debugPrint('executed play button');
+                        },
+                      ),
+                    ],
                   ),
+                  tileColor: Colors.white,
+                  trailing: Image.asset("assets/images/weeknd.jpg"),
+                  //songTile[index].artistImage,
                 ),
               );
             },
